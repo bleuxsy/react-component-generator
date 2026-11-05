@@ -22,6 +22,49 @@ describe('PromptInput', () => {
     expect(onGenerate).toHaveBeenCalledWith('프로필 카드');
   });
 
+  it('500자를 넘기면 생성 버튼이 비활성이다', async () => {
+    const user = userEvent.setup();
+    render(<PromptInput onGenerate={vi.fn()} isLoading={false} />);
+
+    await user.click(screen.getByRole('textbox'));
+    await user.paste('가'.repeat(501));
+
+    expect(screen.getByRole('button', { name: '컴포넌트 생성' })).toBeDisabled();
+  });
+
+  it('500자를 넘기면 에러 메시지를 보여준다', async () => {
+    const user = userEvent.setup();
+    render(<PromptInput onGenerate={vi.fn()} isLoading={false} />);
+
+    await user.click(screen.getByRole('textbox'));
+    await user.paste('가'.repeat(501));
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      '프롬프트는 500자 이하로 입력해주세요. (현재 501자)',
+    );
+  });
+
+  it('500자를 넘기면 Ctrl+Enter로도 onGenerate가 호출되지 않는다', async () => {
+    const onGenerate = vi.fn();
+    const user = userEvent.setup();
+    render(<PromptInput onGenerate={onGenerate} isLoading={false} />);
+
+    await user.click(screen.getByRole('textbox'));
+    await user.paste('가'.repeat(501));
+    await user.keyboard('{Control>}{Enter}{/Control}');
+
+    expect(onGenerate).not.toHaveBeenCalled();
+  });
+
+  it('현재 글자 수와 최대 글자 수를 보여준다', async () => {
+    const user = userEvent.setup();
+    render(<PromptInput onGenerate={vi.fn()} isLoading={false} />);
+
+    await user.type(screen.getByRole('textbox'), '프로필 카드');
+
+    expect(screen.getByText('6 / 500')).toBeInTheDocument();
+  });
+
   it('로딩 중에는 생성 버튼이 비활성이고 "생성 중..." 을 보여준다', () => {
     render(<PromptInput onGenerate={vi.fn()} isLoading={true} />);
     expect(screen.getByRole('button', { name: '생성 중...' })).toBeDisabled();

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { countPromptLength, MAX_PROMPT_LENGTH, validatePrompt } from '../utils/validatePrompt';
 
 interface PromptInputProps {
   onGenerate: (prompt: string) => void;
@@ -16,10 +17,13 @@ const EXAMPLES = [
 
 export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
   const [prompt, setPrompt] = useState('');
+  const validation = validatePrompt(prompt);
+  // Ctrl+Enter는 버튼 disabled를 거치지 않으므로 핸들러와 버튼이 같은 조건을 공유한다.
+  const canSubmit = prompt.trim().length > 0 && validation.isValid && !isLoading;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (prompt.trim() && !isLoading) {
+    if (canSubmit) {
       onGenerate(prompt.trim());
     }
   };
@@ -54,14 +58,22 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
             </div>
           </div>
         </div>
+        {validation.error && (
+          <p className="prompt-error" role="alert">
+            {validation.error}
+          </p>
+        )}
         <div className="prompt-controls">
           <span className="shortcut-hint">
             <kbd>Ctrl</kbd> + <kbd>Enter</kbd> 로 바로 생성
           </span>
+          <span className={`char-count ${validation.isValid ? '' : 'char-count--over'}`}>
+            {`${countPromptLength(prompt)} / ${MAX_PROMPT_LENGTH}`}
+          </span>
           <button
             type="submit"
             className="btn-generate"
-            disabled={!prompt.trim() || isLoading}
+            disabled={!canSubmit}
           >
             {isLoading ? '생성 중...' : '컴포넌트 생성'}
           </button>

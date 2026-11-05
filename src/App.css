@@ -252,6 +252,25 @@
   font-size: 0.85rem;
 }
 
+.char-count {
+  margin-left: auto;
+  color: var(--ink-soft);
+  font-family: var(--font-pixel);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.char-count--over {
+  color: var(--alarm);
+}
+
+.prompt-error {
+  margin-top: 10px;
+  color: var(--alarm);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
 kbd {
   display: inline-block;
   padding: 1px 6px;
