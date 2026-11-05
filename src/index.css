@@ -1,0 +1,78 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+
+  /* 본체(케이스) */
+  --chassis: #c9c1ad;
+  --chassis-dark: #a59c86;
+  --chassis-shadow: #7d7461;
+  --panel: #e9e3d3;
+  --panel-hi: #f7f3e8;
+  --ink: #2a251e;
+  --ink-soft: #5e5647;
+
+  /* CRT */
+  --crt: #17201a;
+  --crt-edge: #0c120e;
+  --phosphor: #f2a93b;
+  --phosphor-dim: #9c6d27;
+
+  /* 신호색 */
+  --key: #33507f;
+  --key-dark: #1f3456;
+  --led-on: #5fbf4a;
+  --led-off: #d08a2c;
+  --alarm: #b8391f;
+
+  --font-pixel: Galmuri11, 'IBM Plex Sans KR', sans-serif;
+  --font-body: 'IBM Plex Sans KR', system-ui, sans-serif;
+  --font-code: 'IBM Plex Mono', GalmuriMono11, Consolas, monospace;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  min-height: 100vh;
+  background-color: var(--chassis);
+  /* 플라스틱 케이스의 미세한 질감 */
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+    radial-gradient(rgba(60, 50, 35, 0.08) 1px, transparent 1px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 1px 2px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px dashed var(--key);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--key);
+  color: var(--panel-hi);
+}
