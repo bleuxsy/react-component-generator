@@ -17,6 +17,7 @@ Stack: React 19, TypeScript 5.9, Vite 8, Bun (API 서버), react-live 4, Vitest 
 - 린트: `bun run lint`
 - 타입체크 + 빌드: `bun run build`
 - 작업 완료 전 `bun run test`와 `bun run lint`를 통과시킨다.
+- TDD 리마인더: Write/Edit/NotebookEdit 직전에 PreToolUse 훅이 `.claude/rules/tdd.md` 요약을 컨텍스트에 주입한다. 문구는 `.claude/hooks/tdd-reminder.json`에서 관리하며, `tdd.md`를 바꾸면 함께 갱신한다.
 - 커밋 게이트: `git commit` 실행 시 PreToolUse 훅이 `bun run test`를 먼저 돌리고, 하나라도 실패하면 커밋을 차단한다. 근거: `.claude/settings.json` `hooks.PreToolUse`. 차단되면 실패한 테스트를 고친 뒤 다시 커밋한다. 테스트 삭제·`skip`·훅 비활성화(`disableAllHooks`)·명령 형태 변형(`git -C ... commit` 등)으로 우회하지 마라.
 
 ## Golden Rules

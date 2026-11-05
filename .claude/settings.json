@@ -26,6 +26,17 @@
             "statusMessage": "커밋 전 테스트 실행 중 (bun run test)..."
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "bash",
+            "command": "cat \"$CLAUDE_PROJECT_DIR/.claude/hooks/tdd-reminder.json\"",
+            "timeout": 10
+          }
+        ]
       }
     ]
   },
