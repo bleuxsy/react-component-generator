@@ -353,6 +353,55 @@ kbd {
 
 /* ── 예시 ─────────────────────────────────── */
 
+.prompt-history {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 2px dotted var(--chassis-shadow);
+}
+
+.history-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.history-clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.history-clear:hover {
+  color: var(--alarm);
+}
+
+.history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-list li {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.history-chip {
+  max-width: 100%;
+  padding: 6px 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .prompt-examples {
   margin-top: 22px;
   padding-top: 18px;

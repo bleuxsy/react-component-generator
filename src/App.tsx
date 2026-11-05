@@ -3,6 +3,13 @@ import { PromptInput } from './components/PromptInput';
 import { ComponentCard } from './components/ComponentCard';
 import { useComponentGenerator } from './hooks/useComponentGenerator';
 import type { Provider } from './types';
+import {
+  addPromptToHistory,
+  loadHistory,
+  loadProvider,
+  saveHistory,
+  saveProvider,
+} from './utils/storage';
 import './App.css';
 
 const PROVIDER_CONFIG = {
@@ -13,7 +20,9 @@ const PROVIDER_CONFIG = {
 function App() {
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
-  const [provider, setProvider] = useState<Provider>('google');
+  // API 키는 저장하지 않는다. 이유는 src/utils/storage.ts 참조.
+  const [provider, setProvider] = useState<Provider>(loadProvider);
+  const [history, setHistory] = useState<string[]>(loadHistory);
   const [envKeys, setEnvKeys] = useState<Record<Provider, boolean>>({
     anthropic: false,
     google: false,
@@ -36,11 +45,20 @@ function App() {
       alert(`${PROVIDER_CONFIG[provider].label} API 키를 입력하거나 .env에 설정해주세요.`);
       return;
     }
+    const nextHistory = addPromptToHistory(history, prompt);
+    setHistory(nextHistory);
+    saveHistory(nextHistory);
     generate(prompt, apiKey || undefined, provider);
+  };
+
+  const handleClearHistory = () => {
+    setHistory([]);
+    saveHistory([]);
   };
 
   const handleProviderChange = (newProvider: Provider) => {
     setProvider(newProvider);
+    saveProvider(newProvider);
     setApiKey('');
   };
 
@@ -75,7 +93,12 @@ function App() {
 
       <main className="workspace">
         <section className="composer-panel" aria-label="컴포넌트 생성">
-          <PromptInput onGenerate={handleGenerate} isLoading={isLoading} />
+          <PromptInput
+            onGenerate={handleGenerate}
+            isLoading={isLoading}
+            history={history}
+            onClearHistory={handleClearHistory}
+          />
         </section>
 
         <aside className="settings-panel" aria-label="실행 설정">
