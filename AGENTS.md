@@ -17,6 +17,7 @@ Stack: React 19, TypeScript 5.9, Vite 8, Bun (API 서버), react-live 4, Vitest 
 - 린트: `bun run lint`
 - 타입체크 + 빌드: `bun run build`
 - 작업 완료 전 `bun run test`와 `bun run lint`를 통과시킨다.
+- 커밋 게이트: `git commit` 실행 시 PreToolUse 훅이 `bun run test`를 먼저 돌리고, 하나라도 실패하면 커밋을 차단한다. 근거: `.claude/settings.json` `hooks.PreToolUse`. 차단되면 실패한 테스트를 고친 뒤 다시 커밋한다. 테스트 삭제·`skip`·훅 비활성화(`disableAllHooks`)·명령 형태 변형(`git -C ... commit` 등)으로 우회하지 마라.
 
 ## Golden Rules
 
@@ -27,6 +28,14 @@ Stack: React 19, TypeScript 5.9, Vite 8, Bun (API 서버), react-live 4, Vitest 
 - Google API 키는 요청 URL 쿼리에 실린다(`server/index.ts:99`). 이 URL이나 fetch 에러 원문을 로그/응답에 그대로 출력하지 마라.
 - 클라이언트는 LLM 제공자 API를 직접 호출하지 않는다. 항상 상대 경로 `/api/*`를 호출하고 Vite 프록시가 :3002로 전달한다. 근거: `src/hooks/useComponentGenerator.ts:23`, `src/App.tsx:25`, `vite.config.ts:8-15`.
 - API 서버 포트 3002는 두 곳에 하드코딩되어 있다: `server/index.ts:139`, `vite.config.ts:11`. 변경 시 둘 다 수정한다.
+
+### Sensitive Files (읽기·수정 금지)
+
+- 에이전트는 민감 파일을 읽거나 수정하지 않는다. 대상: `.env`, `.env.*`, `*.pem`, `*.key`, `*.p12`, `*.pfx`, `id_rsa*`, `id_ed25519*`, `*credential*`, `*secret*`, `.npmrc`, `~/.ssh/**`, `~/.aws/**`, `~/.config/gcloud/**`. 근거: `.claude/settings.json` `permissions.deny`.
+- 차단은 Read/Edit 도구뿐 아니라 셸에도 적용한다. `cat`, `type`, `Get-Content`, `grep`, `sed`, 리다이렉션 등으로 우회하지 마라. `printenv`, `$env:` 등 환경 변수 덤프도 금지.
+- 환경 변수가 필요하면 파일 내용이 아니라 코드의 사용처(`process.env.ANTHROPIC_API_KEY`, `server/index.ts:60-61`)를 근거로 판단한다. 값이 필요하면 사용자에게 직접 설정을 요청한다.
+- deny 규칙에 막혔을 때 다른 도구나 경로로 재시도하지 않는다. 막혔다는 사실을 보고하고 멈춘다.
+- `permissions.deny` 목록을 축소·삭제하는 변경은 사용자의 명시적 요청 없이 하지 않는다. 새 민감 파일 유형이 생기면 `settings.json`과 이 목록을 함께 갱신한다.
 
 ### Double Defense (한쪽만 제거하지 마라)
 
